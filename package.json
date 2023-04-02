@@ -4,12 +4,17 @@
   "description": "top suitability score",
   "type": "module",
   "main": "index.js",
-  "scripts": {
-    "test": "index.test.js"
-  },
   "author": "Benomas",
   "license": "MIT",
   "dependencies": {
     "n-readlines": "^1.0.1"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "@babel/preset-env": "^7.20.2",
+    "babel-jest": "^29.5.0"
   }
 }

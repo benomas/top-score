@@ -1,28 +1,22 @@
-import nReadlines from 'n-readlines'
-import { access, constants } from 'node:fs/promises';
+import { Fleets } from './Fleets.js';
 
-const loadLinesOfFile = function (fileName) {
-  const nReadlinesWalker = new nReadlines(fileName);
+let shipmentsFile;
+let driversFile;
 
-  let line;
-  let fileContentLines = [];
-
-  while (line = nReadlinesWalker.next())
-    fileContentLines.push(line.toString('ascii'));
-
-  return fileContentLines;
+try{
+  shipmentsFile = process.argv[2];
+  driversFile = process.argv[3];
+}catch{
+  new Error('Parameter shipmentsFile (2) and driversFile (3) are required in the form node index path1 path2');
 }
 
-let streetsFile = process.argv[2];
-let driversFile = process.argv[3];
+const runAlgorithm = async function () {
+  let fleets = new Fleets(shipmentsFile,driversFile);
+  await fleets.prepareData();
 
-try {
-  await access(streetsFile, constants.R_OK);
-  await access(driversFile, constants.R_OK);
-} catch (e) {
-  throw new Error('cannot access file')
-}
+  //console.log(fleets.matcher.drivers);
+  console.log(fleets.matcher.drivers['asasasas44,13']);
 
-let streets = loadLinesOfFile(streetsFile);
-let drivers = loadLinesOfFile(driversFile);
+};
 
+runAlgorithm();
