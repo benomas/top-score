@@ -1,14 +1,15 @@
+import { FactorizerS } from './Factorizer.js';
 export class PairableOption {
-  factorizer;
   pairedWith  = null;
   preferences = [];
   factors;
   factorsLength;
-  mode; // proposer | opponent
+  key;
+  preferenceCursor = 0;
+  presentation = 'Pairable Option';
 
-  constructor (mode,data,factorizer) {
-    this.mode = mode;
-    this.factorizer = factorizer;
+  constructor (data) {
+    this.key = data;
     this.loadAssessmentRules(data);
   }
 
@@ -24,12 +25,19 @@ export class PairableOption {
 
   fixPreferences (pairableOptions) {
     return this.setPreferences(
-      Object.values(pairableOptions).sort((a, b) => this.cPairStrength(a) - this.cPairStrength(b))
+      Object.values(pairableOptions).sort((a, b) => this.cPairStrength(b) - this.cPairStrength(a))
     );
   }
 
-  match (pairableOption) {
+  pair (pairableOption) {
     this.pairedWith = pairableOption;
+    pairableOption.pairedWith = this;
+
+    return this;
+  }
+
+  clear () {
+    this.pairedWith = null;
 
     return this;
   }
@@ -38,10 +46,22 @@ export class PairableOption {
     return this.pairedWith;
   }
 
+  isPaired () {
+    return this.pairedWith !== null;
+  }
+
   loadAssessmentRules (data) {
-    this.factors = this.factorizer.setTargetNumber(data.length).calculateFactors().getFactors();
+    this.factors = FactorizerS.getFactorizer().setTargetNumber(data.length).calculateFactors().getFactors();
     this.factorsLength = Object.keys(this.factors).length;
 
     return this
+  }
+
+  getKey () {
+    return this.key
+  }
+
+  getPresentation () {
+    return this.presentation;
   }
 }

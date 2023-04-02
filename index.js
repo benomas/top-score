@@ -14,8 +14,7 @@ const runAlgorithm = async function () {
   let fleets = new Fleets(shipmentsFile,driversFile);
   await fleets.prepareData();
 
-  //console.log(fleets.matcher.drivers);
-  console.log(fleets.matcher.drivers['asasasas44,13']);
+  console.log(fleets.generateDistributionPlan().presentDistributionPlan());
 
 };
 

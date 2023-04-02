@@ -113,6 +113,16 @@ export class Factorizer {
       to   = factorized1;
     }
 
-    return Object.keys(from).find(fromKey => to[fromKey] !== undefined) !== undefined;
+    return Object.keys(from.factors).find(fromKey => to.factors[fromKey] !== undefined) !== undefined;
+  }
+}
+
+//singleton to get access to factorizer global unique instance
+export class FactorizerS {
+  static getFactorizer () {
+    if (global.factorizerInstance === undefined)
+      global.factorizerInstance = new Factorizer();
+
+    return global.factorizerInstance
   }
 }

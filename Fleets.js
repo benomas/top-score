@@ -1,12 +1,14 @@
 import nReadlines from 'n-readlines';
 import { access, constants } from 'node:fs/promises';
 import { Matcher } from './match/Matcher.js';
+import { DriverFactory } from './match/Driver.js';
+import { ShipmentFactory } from './match/Shipment.js';
 
 export class Fleets {
   shipmentsFile;
   driversFile;
-  drivers   = {};
-  shipments = {};
+  drivers   = [];
+  shipments = [];
   matcher;
 
   constructor (shipmentsFile,driversFile) {
@@ -15,16 +17,11 @@ export class Fleets {
   }
 
   async prepareData () {
-    await this.validateFiles()
+    await this.validateFiles();
 
     this.loadShipments()
       .loadDrivers()
-      .startMatcher(this.drivers.length <= this.shipments.length ? 'drivers':'shipments');
-
-    this.matcher
-      .prepareShipments(this.shipments)
-      .prepareDrivers(this.drivers)
-      .fixPreferences();
+      .startMatcher();
   }
 
   async validateFiles () {
@@ -43,8 +40,14 @@ export class Fleets {
     let line;
     let fileContentLines = [];
 
-    while (line = nReadlinesWalker.next())
-      fileContentLines.push(line.toString('ascii'));
+    while (line = nReadlinesWalker.next()){
+      let newLine = line.toString('ascii');
+
+      if (newLine.length === 0)
+        continue;
+
+      fileContentLines.push(newLine);
+    }
 
     return fileContentLines;
   }
@@ -70,8 +73,32 @@ export class Fleets {
   }
 
   startMatcher () {
-    this.matcher = new Matcher();
+    switch (Object.values(this.drivers).length <= Object.values(this.shipments).length) {
+      case true:
+        this.matcher = new Matcher(new DriverFactory(),new ShipmentFactory());
+        this.matcher.prepareProposers(this.drivers);
+        this.matcher.prepareOpponents(this.shipments);
+        break;
+
+      case false:
+        this.matcher = new Matcher(new ShipmentFactory(),new DriverFactory());
+        this.matcher.prepareProposers(this.shipments);
+        this.matcher.prepareOpponents(this.drivers);
+        break;
+    }
+
+    this.matcher.fixPreferences();
 
     return this;
+  }
+
+  generateDistributionPlan () {
+    this.matcher.match();
+
+    return this;
+  }
+
+  presentDistributionPlan () {
+    return this.matcher.presentPairs();
   }
 }

@@ -1,6 +1,12 @@
 import { PairableOption } from './PairableOption.js';
+import { FactorizerS } from './Factorizer.js';
 
 export class Shipment extends PairableOption {
+  constructor (data) {
+    super(data);
+    this.presentation = 'For the shipment';
+  }
+
   loadAssessmentRules (data) {
     super.loadAssessmentRules(data);
     this.street  = data;
@@ -10,11 +16,17 @@ export class Shipment extends PairableOption {
   }
 
   cPairStrength (pairableOption) {
-    let strength = pairableOption[this.type];
+    let strength = pairableOption.ssValues[this.type];
 
-    if(this.factorizer.duplicateFactor(pairableOption,this))
-      strength * 1.5;
+    if(FactorizerS.getFactorizer().duplicateFactor(pairableOption,this))
+      strength = strength * 1.5;
 
     return strength;
   }
-}
+};
+
+export class ShipmentFactory{
+  newInstance (data) {
+    return new Shipment(data);
+  }
+};
