@@ -114,6 +114,7 @@ export class Matcher {
       return {
         [opponent.getPresentation()]:opponent.getKey(),
         [proposer.getPresentation()]:proposer.getKey(),
+        'SS':proposer.cPairStrength(opponent),
       }
     })
   }

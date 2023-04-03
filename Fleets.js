@@ -99,6 +99,11 @@ export class Fleets {
   }
 
   presentDistributionPlan () {
-    return this.matcher.presentPairs();
+    let pairs = this.matcher.presentPairs();
+
+    return {
+      pairs,
+      totalSS:pairs.reduce((p,c)=> p + c.SS,0)
+    }
   }
 }

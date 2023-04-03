@@ -15,7 +15,6 @@ const runAlgorithm = async function () {
   await fleets.prepareData();
 
   console.log(fleets.generateDistributionPlan().presentDistributionPlan());
-
 };
 
 runAlgorithm();
